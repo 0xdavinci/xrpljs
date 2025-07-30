@@ -2,16 +2,28 @@
 // Fund from pre assigned wallet (B)
 
 import xrpl from "xrpl";
+import dotenv from "dotenv";
+
+// Load environment variables from .evn file
+
+dotenv.config();
 
 async function main() {
+  // Variable environment variables
+  const { XRPL_NETWORK, FUND_WALLET_SEED } = process.env;
+  if (!XRPL_NETWORK || !FUND_WALLET_SEED) {
+    throw new Error(
+      "XRPL_NETWORK and FUND_WALLET_SEED must be defined in .env file"
+    );
+  }
   // Initialize XRPL client and connect to Testnet
-  const client = new xrpl.Client("wss://s.altnet.rippletest.net:51233");
+  const client = new xrpl.Client(process.env.XRPL_NETWORK);
   await client.connect();
   console.log("Connected to Testnet");
 
   try {
     // Fund wallet (replace wit your actual Testnet wallet seed)
-    const fundWalletSeed = "sEdS6ogSey4SAKXmZpu1rmmc1oyL1Nz";
+    const fundWalletSeed = process.env.FUND_WALLET_SEED;
     const fundWallet = xrpl.Wallet.fromSeed(fundWalletSeed);
 
     // Check fund wallet balance
