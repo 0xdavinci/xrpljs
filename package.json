@@ -1,6 +1,7 @@
 {
   "type": "module",
   "dependencies": {
+    "@axelar-network/axelarjs-sdk": "^0.17.4",
     "dotenv": "^17.2.1",
     "xrpl": "^4.3.0"
   }
