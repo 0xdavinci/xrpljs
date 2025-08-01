@@ -1,15 +1,10 @@
-import { Client, Wallet } from "xrpl";
+import { Client } from "xrpl";
 import { ethers } from "ethers";
 import dotenv from "dotenv";
-import { decodeAccountID } from "xrpl";
 import IITS from "@axelar-network/interchain-token-service/artifacts/contracts/interfaces/IInterchainTokenService.sol/IInterchainTokenService.json" assert { type: "json" };
 
 // Load environment variables
 dotenv.config();
-
-function hex(str) {
-  return Buffer.from(str, "utf8").toString("hex").toUpperCase();
-}
 
 async function transferXRPfromEVMtoXRPL() {
   try {
@@ -20,9 +15,7 @@ async function transferXRPfromEVMtoXRPL() {
     );
 
     // Get private key from environment or use a default for testing
-    const evmPrivateKey =
-      process.env.EVM_PRIVATE_KEY ||
-      "0x1234567890123456789012345678901234567890123456789012345678901234";
+    const evmPrivateKey = process.env.EVM_PRIVATE_KEY;
     const signer = new ethers.Wallet(evmPrivateKey, provider);
 
     console.log("Connecting to XRPL Testnet...");
@@ -30,8 +23,7 @@ async function transferXRPfromEVMtoXRPL() {
 
     // Step 2: Define wallet addresses
     const walletBEVMAddress = signer.address; // EVM wallet address
-    const walletAXRPLAddress =
-      process.env.XRPL_ADDRESS || "rEM59UKdVUUPoUj7LEJuiH658c5MPhmJXE"; // XRPL wallet address
+    const walletAXRPLAddress = process.env.XRPL_ADDRESS; // XRPL wallet address
 
     console.log("Wallet B (EVM Sidechain):", walletBEVMAddress);
     console.log("Wallet A (XRPL Testnet):", walletAXRPLAddress);
@@ -57,8 +49,7 @@ async function transferXRPfromEVMtoXRPL() {
     }
 
     // Step 5: Prepare transfer parameters
-    const amount = ethers.parseEther("2"); // Transfer 0.1 XRP
-    console.log(amount);
+    const amount = ethers.parseEther("1");
     const destinationChain = "xrpl"; // Axelar chain ID for XRPL Testnet
     const destinationAddress = walletAXRPLAddress;
 
@@ -66,8 +57,6 @@ async function transferXRPfromEVMtoXRPL() {
 
     const destinationAddressBytes = ethers.toUtf8Bytes(destinationAddress);
 
-    //const evmDestinationAddress = ethers.hexlify(accountBytes);
-    //console.log("EVM-STYLE address:", evmDestinationAddress);
     console.log("Preparing EVM transaction...");
     console.log("Amount to transfer:", ethers.formatEther(amount), "XRP");
     console.log("Destination chain:", destinationChain);
@@ -81,10 +70,8 @@ async function transferXRPfromEVMtoXRPL() {
       destinationAddressBytes,
       amount,
       "0x",
-      ethers.parseEther("0.2")
+      ethers.parseEther("0.1")
     );
-
-    console.log("Calldata:", tx.data);
 
     console.log("Transaction hash:", tx.hash);
     console.log("Waiting for transaction confirmation...");
@@ -128,58 +115,8 @@ async function transferXRPfromEVMtoXRPL() {
   }
 }
 
-// Helper function to check balances
-// async function checkBalances() {
-//   try {
-//     const xrplClient = new Client("wss://s.altnet.rippletest.net:51233");
-//     const provider = new ethers.JsonRpcProvider(
-//       "https://rpc-evm-sidechain.xrpl.org"
-//     );
-
-//     const evmPrivateKey =
-//       process.env.EVM_PRIVATE_KEY ||
-//       "0x1234567890123456789012345678901234567890123456789012345678901234";
-//     const signer = new ethers.Wallet(evmPrivateKey, provider);
-
-//     const walletBEVMAddress = signer.address;
-//     const walletAXRPLAddress =
-//       process.env.XRPL_ADDRESS || "rEM59UKdVUUPoUj7LEJuiH658c5MPhmJXE";
-
-//     await xrplClient.connect();
-
-//     // Check EVM balance
-//     const evmBalance = await provider.getBalance(walletBEVMAddress);
-//     console.log(
-//       "EVM Sidechain Balance:",
-//       ethers.formatEther(evmBalance),
-//       "XRP"
-//     );
-
-//     // Check XRPL balance
-//     const accountInfo = await xrplClient.request({
-//       command: "account_info",
-//       account: walletAXRPLAddress,
-//       ledger_index: "validated",
-//     });
-
-//     const xrplBalance = accountInfo.result.account_data.Balance;
-//     console.log(
-//       "XRPL Testnet Balance:",
-//       xrplBalance,
-//       "drops (",
-//       Number(xrplBalance) / 1000000,
-//       "XRP)"
-//     );
-
-//     await xrplClient.disconnect();
-//   } catch (error) {
-//     console.error("Error checking balances:", error.message);
-//   }
-// }
 
 // Execute the transfer
 console.log("Starting XRP transfer from EVM sidechain to XRPL testnet...");
 await transferXRPfromEVMtoXRPL();
 
-// Uncomment the line below to check balances instead
-// await checkBalances();
