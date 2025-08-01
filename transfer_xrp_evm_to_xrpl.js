@@ -70,7 +70,11 @@ async function transferXRPfromEVMtoXRPL() {
       destinationAddressBytes,
       amount,
       "0x",
-      ethers.parseEther("0.1")
+      ethers.parseEther("0.5"),
+      {
+        gasLimit: 250_000,
+        value: ethers.parseEther("0.5"),
+      }
     );
 
     console.log("Transaction hash:", tx.hash);
@@ -115,8 +119,6 @@ async function transferXRPfromEVMtoXRPL() {
   }
 }
 
-
 // Execute the transfer
 console.log("Starting XRP transfer from EVM sidechain to XRPL testnet...");
 await transferXRPfromEVMtoXRPL();
-
