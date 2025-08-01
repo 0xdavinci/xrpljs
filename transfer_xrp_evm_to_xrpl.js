@@ -64,11 +64,10 @@ async function transferXRPfromEVMtoXRPL() {
 
     // Convert XRPL address to bytes for the memo
 
-    const accountBytes = decodeAccountID(destinationAddress);
-    
+    const destinationAddressBytes = ethers.toUtf8Bytes(destinationAddress);
 
-    const evmDestinationAddress = ethers.hexlify(accountBytes);
-    console.log("EVM-STYLE address:", evmDestinationAddress);
+    //const evmDestinationAddress = ethers.hexlify(accountBytes);
+    //console.log("EVM-STYLE address:", evmDestinationAddress);
     console.log("Preparing EVM transaction...");
     console.log("Amount to transfer:", ethers.formatEther(amount), "XRP");
     console.log("Destination chain:", destinationChain);
@@ -79,7 +78,7 @@ async function transferXRPfromEVMtoXRPL() {
     const tx = await itsContract.interchainTransfer(
       "0xba5a21ca88ef6bba2bfff5088994f90e1077e2a1cc3dcc38bd261f00fce2824f",
       destinationChain,
-      accountBytes,
+      destinationAddressBytes,
       amount,
       "0x",
       ethers.parseEther("0.2")
