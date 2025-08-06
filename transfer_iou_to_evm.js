@@ -9,8 +9,6 @@ async function transferXRPtoEVM() {
   try {
     // Step 1: Set up XRPL Testnet and EVM Sidechain Testnet clients
     const xrplClient = new Client("wss://s.altnet.rippletest.net:51233");
-    // const provider = new ethers.JsonRpcProvider('https://rpc-evm-sidechain.xrpl.org');
-    // const signer = new ethers.Wallet('YOUR_EVM_PRIVATE_KEY', provider); // Replace with Wallet B's EVM private key
 
     console.log("Connecting to XRPL Testnet...");
     await xrplClient.connect();
@@ -22,16 +20,14 @@ async function transferXRPtoEVM() {
     console.log("Wallet B (EVM Sidechain Testnet):", walletBEVMAddress);
     console.log(hex(walletBEVMAddress.replace("0x", "")));
 
-    // Step 3: Set up Axelar ITS contract
-    // const ITS_ADDRESS = '0xB5FB4BE02232B1bBA4dC8f81dc24C26980dE9e3C';
-    // const ITS_ABI = [
-    //   'function interchainTransfer(string memory _destinationChain, bytes memory _destinationAddress, uint256 _amount, bytes memory _data) payable',
-    // ];
-    // const itsContract = new ethers.Contract(ITS_ADDRESS, ITS_ABI, signer);
-
     // Step 4: Send XRP from Wallet A (XRPL Testnet) to Axelar Gateway
     const gatewayAddress = "rNrjh1KGZk2jBR3wPfAQnoidtFFYQKbQn2"; // Replace with Axelar Gateway address from docs.axelar.dev
-    const amount = "1000000"; // 1 XRP in drops (1 XRP = 1,000,000 drops)
+    //const amount = "1000000"; // 1 XRP in drops (1 XRP = 1,000,000 drops)
+    const amount = {
+      currency: "MIL",
+      issuer: "r4oCscK9bWbfW2mPPRqtzLgvGhc5WihXTq",
+      value: "1000",
+    };
     const destinationChain = "xrpl-evm"; // Axelar chain ID for XRPL EVM Sidechain Testnet
 
     const payment = {
@@ -61,7 +57,7 @@ async function transferXRPtoEVM() {
         {
           Memo: {
             MemoType: "6761735f6665655f616d6f756e74", // hex("gas_fee_amount")
-            MemoData: hex("200000"), // amount of tokens to allocate to gas fees
+            MemoData: hex("100000"), // amount of tokens to allocate to gas fees
           },
         },
       ],
